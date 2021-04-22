@@ -1,0 +1,5 @@
+# venv it is python 3.9 virtual environment 
+venv 
+.vscode/
+node_modules
+secret_keys.json

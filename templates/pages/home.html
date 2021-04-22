@@ -1,0 +1,32 @@
+{% extends 'base.html' %} {%block title%} home {% endblock %} {%block content%}
+<div class="row text-center">
+  <div class="col">
+    <h1>Spher</h1>
+  </div>
+</div>
+
+
+
+<div class="row">
+  <div class="col-md-4 mx-auto col-10">
+    <form class="form" id="share-form" method="POST" action="/share">
+      {% csrf_token %}
+      <div class="d-none alert alert-danger" id="create-form-error"> </div>
+      <input type="hidden" value="/" name="next" /> 
+      <textarea
+        required='required'
+        class="form-control"
+        name="content"
+        placeholder="your commit"
+      ></textarea>
+      <button type="submit" class="btn btn-success">share</button>
+    </form>
+  </div>
+</div>
+
+<div class="row" id="shares"><br /></div>
+
+
+<script type="text/javascript" defer src= 'static/home.js'></script>
+
+{% endblock %}

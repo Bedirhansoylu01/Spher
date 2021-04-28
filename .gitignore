@@ -2,4 +2,5 @@
 venv 
 .vscode/
 node_modules
-secret_keys.json
+#for hide Keys
+.env 

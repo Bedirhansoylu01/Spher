@@ -1,27 +1,26 @@
 from pathlib import Path
 import os
-import json
-
+from dotenv import load_dotenv
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-with open('config.json') as f:
-  data = json.load(f)
+env_path = Path(BASE_DIR)/'.env'
+load_dotenv(env_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = data['SECRET_KEY']
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.localhost','127.0.0.1']
-LOGIN_URL="/login"
-
+ALLOWED_HOSTS = ['.localhost', '127.0.0.1']
+LOGIN_URL = "/login"
+SHARE_ACTIONS = ['like', 'unlike', 'recommit']
 # Application definition
 
 INSTALLED_APPS = [
@@ -52,7 +51,7 @@ ROOT_URLCONF = 'Spher.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [Path(BASE_DIR)/"templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,18 +115,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    Path(BASE_DIR)/"static",
 ]
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # @authentication_classes([SessionAuthentication]
+        'rest_framework.authentication.SessionAuthentication'
 
-
-REST_FRAMEWORK={
-    'DEFAULT_AUTHENTICATION_CLASSES':[
-    'rest_framework.authentication.SessionAuthentication'
     ],
 
-    'DEFAULT_RENDERER_CLASSES': [#Only for Debug
+    'DEFAULT_RENDERER_CLASSES': [  # Only for Debug
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],

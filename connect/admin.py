@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import share,Commit_Like
+from .models import Share,Commit_Like
 # Register your models here.
 
 class Commit_LikeAdmin(admin.TabularInline):
@@ -14,6 +14,6 @@ class ShareAdmin(admin.ModelAdmin):
     search_fields=["user__username","content"]
 
     class Meta:
-        model=share
+        model=Share
 
-admin.site.register(share,ShareAdmin)
+admin.site.register(Share,ShareAdmin)

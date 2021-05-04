@@ -1,6 +1,23 @@
 const ShareItems = document.querySelector("#shares")
 const ShareCreateForm = document.querySelector('#share-form')
 
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+
 function handleFormError(msg, display) {
   var myErrorDiv = document.querySelector("#create-form-error")
   if (display === true) {
@@ -71,14 +88,14 @@ ShareCreateForm.addEventListener("submit", handleForm)
 function LoadShare(Share_ele) {
   const xhr = new XMLHttpRequest();
   xhr.responseType = "json";
-  xhr.open("GET", "/share_ls");
+  xhr.open("GET", "api/share_ls");
 
 
   xhr.onload = function () {
     const serverResponse = xhr.response;
     const Itemlist = serverResponse;
     var finalItem = "";
-    for (let a = 0; a < serverResponse.length; a++) {
+    for (let a = 0; a < Itemlist.length; a++) {
       var shareobj = serverResponse[a];
       var currentItem = formatItems(shareobj);
       finalItem += currentItem;
@@ -90,20 +107,23 @@ function LoadShare(Share_ele) {
   xhr.send();
 }
 
-function HandleLike(share_id, likes) {
+function HandleCommitAction(share_id, CurrentCount, action) {
   const url = "/api/share/action"
   const method = "POST"
   const data = JSON.stringify({
     id: share_id,
-    action: "like"
+    action: action
   })
   const xhr = new XMLHttpRequest()
+  const csrftoken = getCookie('csrftoken');
   xhr.open(method, url)
   xhr.setRequestHeader("Content-Type", "application/json")
   xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
   xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+  xhr.setRequestHeader("X-CSRFToken", csrftoken)
   xhr.onload = function () {
     console.log(xhr.status, xhr.response)
+    LoadShare(ShareItems)
   }
   xhr.send(data)
   return
@@ -113,13 +133,23 @@ function HandleLike(share_id, likes) {
 
 
 
-
+  
 function LikeBtn(share) {
-  return "<button class='btn btn-primary btn-sm' onclick=HandleLike(" +
+  return "<button class='btn btn-primary btn-sm' onclick=HandleCommitAction(" +
     share.id + "," + share.likes + ",'like')>" + share.likes + " Likes</button>"
 }
 
 
+function UnlikeBtn(share) {
+  return "<button class='btn btn-outline-primary btn-sm' onclick=HandleCommitAction(" +
+    share.id + "," + share.likes + ",'unlike')>" + "Unlike</button>"
+}
+
+
+function RecommitBtn(share) {
+  return "<button class='btn btn-outline-success btn-sm' onclick=HandleCommitAction(" +
+    share.id + "," + share.likes + ",'recommit')>" + "Recommit</button>"
+}
 
 
 
@@ -135,7 +165,7 @@ function formatItems(share) {
     "<p>" +
     share.content +
     "<div class='btn-group'>" +
-    LikeBtn(share) +
+    LikeBtn(share) + UnlikeBtn(share) + RecommitBtn(share) +
     "</div></p></div>";
 
   return currentItem;

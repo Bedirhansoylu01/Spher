@@ -1,10 +1,10 @@
 from django import forms
-from .models import share
+from .models import Share
 
 class shareForm(forms.ModelForm):
 
     class Meta:
-        model = share
+        model = Share
         fields = ['content']
 
     def clean_content(self): #clean_content a django compenent

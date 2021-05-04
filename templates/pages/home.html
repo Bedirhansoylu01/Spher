@@ -7,7 +7,7 @@
 
 <div class="row">
   <div class="col-md-4 mx-auto col-10">
-    <form class="form" id="share-form" method="POST" action="/share">
+    <form class="form" id="share-form" method="POST" action="/api/share">
       {% csrf_token %}
       <div class="d-none alert alert-danger" id="create-form-error"></div>
       <input type="hidden" value="/" name="next" />

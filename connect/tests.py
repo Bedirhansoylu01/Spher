@@ -31,19 +31,18 @@ class ConnectTestCase(TestCase):
         self.assertEqual(user.username, "beta")
 
     def test_Share_created(self):
-        user = User.objects.get(username="beta")
         Share.objects.create(content="beta testing", user=self.user)
         qs = Share.objects.all()
         self.assertEqual(len(qs), 4)
 
     def test_list(self):
-        client = self.apiclient()
+        client = APIClient()
         response = client.get('/api/share_ls')
         r_json = len(response.json())
         self.assertEqual(r_json, 3)
         self.assertEqual(response.status_code, 200)
 
-    def test_action_and_share(self):
+    def test_action_and_detail(self):
         client = self.apiclient()
         response = client.post('/api/share/action',
                                {'id': 3, 'action': 'like'})
@@ -77,17 +76,17 @@ class ConnectTestCase(TestCase):
         r_json = len(response.json())
         self.assertEqual(r_json, 7)
 
-    def test_create_share(self):
+    def test_API_share(self):
         client = self.apiclient()
         response = client.post('/api/share', {'content': 'Gamma'})
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), {'id': 4,
                                            'content': 'Gamma', 'likes': 0, 'user': 'beta', 'parent': None})
 
-    def test_commit_delete(self):
+    def test_API_delete(self):
         client = self.apiclient()
         response = client.delete("/api/share/3/delete")
-        self.assertEqual(self.count-1, 2)
+        self.assertEqual(len(Share.objects.all()), 2)
         self.assertEqual(response.status_code, 200)
         response = client.delete("/api/share/2/delete")
         self.assertEqual(response.json()[

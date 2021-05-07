@@ -19,7 +19,7 @@ def home(request, *args, **kwargs):
 
 
 @api_view(['POST'])
-# @authentication_classes([SessionAuthentication])
+@authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def shareView(request, *args, **kwargs):
     serializer = ShareSerializer(data=request.POST)
@@ -31,7 +31,7 @@ def shareView(request, *args, **kwargs):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 def commit_list(request, *args, **kwargs):
     qs = Share.objects.all()
     serializer = ShareSerializer_GET(qs, many=True) # many=True for mutiple object

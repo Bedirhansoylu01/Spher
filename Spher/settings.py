@@ -18,7 +18,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 LOGIN_URL = "/login"
 SHARE_ACTIONS = ['like', 'unlike', 'recommit']
 # Application definition
@@ -33,12 +33,14 @@ INSTALLED_APPS = [
     # internal
     'connect.apps.ConnectConfig',
     # From external
-    'rest_framework'
+    'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -117,6 +119,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     Path(BASE_DIR)/"static",
 ]
+
+
+CORS_ORIGIN_ALLOW_ALL=True # any website has access to my API
+CORS_URLS_REGEX=r'^/api/.*$'
 
 
 REST_FRAMEWORK = {

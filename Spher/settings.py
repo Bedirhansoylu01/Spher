@@ -120,6 +120,10 @@ STATICFILES_DIRS = [
     Path(BASE_DIR)/"static",
 ]
 
+STATIC_ROOT=Path(BASE_DIR)/"static-root"
+
+
+
 
 CORS_ORIGIN_ALLOW_ALL=True # any website has access to my API
 CORS_URLS_REGEX=r'^/api/.*$'

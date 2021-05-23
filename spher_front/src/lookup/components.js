@@ -1,5 +1,3 @@
-
-
 export function loadShare(callback) {
     const xhr = new XMLHttpRequest();
     xhr.responseType = "json";

@@ -2,14 +2,27 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import {ShareComponents} from './shares'
 import reportWebVitals from './reportWebVitals';
 
+const  appHome= document.getElementById('root')
+const  Sharels=document.getElementById("Home_Share")
+
+if(appHome){
 ReactDOM.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>,appHome
 );
+}
+
+if(Sharels){
+  ReactDOM.render(
+    <React.StrictMode>
+      <ShareComponents/>
+      </React.StrictMode>,Sharels
+  )
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

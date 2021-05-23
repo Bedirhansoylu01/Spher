@@ -1,3 +1,3 @@
-import {ShareList} from './components'
+import {ShareComponents} from './components'
 
-export {ShareList}
+export {ShareComponents}

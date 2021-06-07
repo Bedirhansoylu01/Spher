@@ -120,24 +120,33 @@ STATICFILES_DIRS = [
     Path(BASE_DIR)/"static",
 ]
 
-STATIC_ROOT=Path(BASE_DIR)/"static-root"
+STATIC_ROOT = Path(BASE_DIR)/"static-root"
 
 
+CORS_ALLOW_ALL_ORIGINS = True  # any website has access to my API
+CORS_URLS_REGEX = r'^/api/.*$'
 
 
-CORS_ORIGIN_ALLOW_ALL=True # any website has access to my API
-CORS_URLS_REGEX=r'^/api/.*$'
+DEFAULT_RENDERER_CLASSES = [ 
+        'rest_framework.renderers.JSONRenderer'
+    ]
+
+DEFAULT_AUTHENTICATION_CLASSES = [
+        'rest_framework.authentication.SessionAuthentication'
+    ]
+
+if DEBUG:
+    DEFAULT_RENDERER_CLASSES += [
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    ]
+
+    DEFAULT_AUTHENTICATION_CLASSES += [
+        'Spher.rest_api.dev.DevAuthentication'
+    ]
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # @authentication_classes([SessionAuthentication]
-        'rest_framework.authentication.SessionAuthentication'
+    'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,
 
-    ],
-
-    'DEFAULT_RENDERER_CLASSES': [  # Only for Debug
-        'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
-    ],
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
 }

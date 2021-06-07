@@ -35,6 +35,23 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="Home_Share"></div>
+    <div id='share-container'></div>
+    <div class='' id="Home_Share" data-username="Zachary" data-valid-User='true'></div>
+    
+    <script>
+    
+    var path = window.location.pathname
+    var match= path.match(/(?<share_id>\d+)/)
+    if (match){
+      var shareId =match.groups.share_id
+      var homeEl = document.getElementById('Home_Share')
+      homeEl.className = "d-none"
+      var shareEl = "<div class= 'spher-detail' data-share-id="+shareId+" data-class-name='col-6 mx-auto'></div>"
+      var mainContainer = document.getElementById('share-container')  
+      mainContainer.innerHTML = shareEl 
+    } 
+    
+    </script> 
+
   </body>
 </html>

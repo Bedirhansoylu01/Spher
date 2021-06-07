@@ -1,3 +1,3 @@
-import {loadShare} from './components'
+import {backendLookup} from './components'
 
-export {loadShare}
+export {backendLookup}

@@ -15,14 +15,27 @@ from .serializers import ShareSerializer, ShareSerializer_GET, ShareActionSerial
 
 
 def home(request, *args, **kwargs):
-    return render(request, "pages/home.html")
+    username= None
+    if request.user.is_authenticated:
+        username= request.user.username
+    return render(request, "pages/home.html",context={"username":username},status=200)
+
+def spher_list_view(request, *args, **kwargs):
+    return render(request,"components/list.html")
+
+def spher_detail_view(request,share_id,*args, **kwargs):
+    return render(request, "components/detail.html",context={'share_id':share_id})
+
+def spher_profile_view(request, username,*args, **kwargs):
+    return render(request, "components/profile.html",context={"profile_username":username})
+
+
 
 
 @api_view(['POST'])
-@authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def shareView(request, *args, **kwargs):
-    serializer = ShareSerializer(data=request.POST)
+    serializer = ShareSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serial = serializer.save(user=request.user)
         serial = ShareSerializer_GET(serial)
@@ -34,6 +47,9 @@ def shareView(request, *args, **kwargs):
 #@permission_classes([IsAuthenticated])
 def commit_list(request, *args, **kwargs):
     qs = Share.objects.all()
+    username = request.GET.get('username') #? url:/api/share_ls______?username=_variable_
+    if username != None:
+        qs= qs.filter(user__username__iexact=username)
     serializer = ShareSerializer_GET(qs, many=True) # many=True for mutiple object
     return Response(serializer.data, status=200)
 
@@ -63,6 +79,7 @@ def shareactionview(request, *args, **kwargs):
 
         if not qs.exists():
             return Response({}, status=404)
+
         obj = qs.first()
 
         if action == 'like':

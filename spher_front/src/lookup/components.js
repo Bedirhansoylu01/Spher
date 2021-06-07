@@ -1,15 +1,49 @@
-export function loadShare(callback) {
-    const xhr = new XMLHttpRequest();
-    xhr.responseType = "json";
-    const url_ls = "http://127.0.0.1:8000/api/share_ls"
-    xhr.open("GET", url_ls);
-  
-    xhr.onload = function () {
-      callback(xhr.response, xhr.status)
-    };
-    xhr.onerror = function (ms) {
-      console.log(ms);
-      callback({ "message": "The request was an error" }, 400);
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
     }
-    xhr.send();
   }
+  return cookieValue;
+}
+
+
+
+export function backendLookup(method, endpoint, callback, data) {
+  let jsonData;
+  if (data) {
+    jsonData = JSON.stringify(data)
+  }
+
+  const xhr = new XMLHttpRequest()
+  const url = `http://127.0.0.1:8000/api${endpoint}` //share_ls
+  const csrftoken = getCookie('csrftoken');
+  xhr.responseType = "json";
+  xhr.open(method, url); //GET
+  xhr.setRequestHeader("Content-Type", "application/json")  
+  
+  if(csrftoken){
+  //xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+  xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+  xhr.setRequestHeader("X-CSRFToken", csrftoken)
+  }
+  
+
+  xhr.onload = function () {
+    callback(xhr.response, xhr.status)
+  };
+  xhr.onerror = function (ms) {
+    console.log(ms);
+    callback({ "message": "The request was an error" }, 400);
+  }
+  xhr.send(jsonData);
+}
+
+

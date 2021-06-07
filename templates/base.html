@@ -20,14 +20,14 @@
        background-color:#00ffff !important;
      }
      </style>
-    <title>Spher{%block title%}{% endblock %} </title>
+    <title>Spher{% block title %}{% endblock %} </title>
   </head>
   <body>
-    {%include "components/navbar.html"%}
+    {% include "components/navbar.html" %}
 
     <div class="container">
       
-    {%block content%}{% endblock %}
+    {% block content %} {% endblock %}
 
     </div>
    {% include 'react/base_embed.html'%}

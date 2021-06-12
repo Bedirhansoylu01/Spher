@@ -19,8 +19,8 @@ export function ShareComponents(props) {
   }
 
 
-  return <div className={props.className}>
-    {validUser === true && <ShareCreate didShare={handleNewShare} className='col-12 mb-3'/>} 
+  return <div className='row'>
+    {validUser === true && <ShareCreate didShare={handleNewShare} className='col-md-4 mx-auto col-10'/>} 
     <ShareList {...props} newShares={newShares} />
   </div>
 }

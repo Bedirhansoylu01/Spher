@@ -2,116 +2,28 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.conf import settings
 from django.utils.http import is_safe_url
-from django.contrib.auth.models import User
-# rest_framework
-from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+#from django.contrib.auth.models import User
 # internal fs
-from .models import Share
 from .forms import shareForm
-from .serializers import ShareSerializer, ShareSerializer_GET, ShareActionSerializer
 
 
 def home(request, *args, **kwargs):
-    username= None
+    username = None
     if request.user.is_authenticated:
-        username= request.user.username
-    return render(request, "pages/home.html",context={"username":username},status=200)
+        username = request.user.username
+    return render(request, "pages/home.html", context={"username": username}, status=200)
+
 
 def spher_list_view(request, *args, **kwargs):
-    return render(request,"components/list.html")
-
-def spher_detail_view(request,share_id,*args, **kwargs):
-    return render(request, "components/detail.html",context={'share_id':share_id})
-
-def spher_profile_view(request, username,*args, **kwargs):
-    return render(request, "components/profile.html",context={"profile_username":username})
+    return render(request, "components/list.html")
 
 
+def spher_detail_view(request, share_id, *args, **kwargs):
+    return render(request, "components/detail.html", context={'share_id': share_id})
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def shareView(request, *args, **kwargs):
-    serializer = ShareSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        serial = serializer.save(user=request.user)
-        serial = ShareSerializer_GET(serial)
-        return Response(serial.data, status=201)
-    return Response({}, status=400)
-
-
-@api_view(['GET'])
-#@permission_classes([IsAuthenticated])
-def commit_list(request, *args, **kwargs):
-    qs = Share.objects.all()
-    username = request.GET.get('username') #? url:/api/share_ls______?username=_variable_
-    if username != None:
-        qs= qs.filter(user__username__iexact=username)
-    serializer = ShareSerializer_GET(qs, many=True) # many=True for mutiple object
-    return Response(serializer.data, status=200)
-
-
-@api_view(['GET'])
-def commit_detail(request, share_id, *args, **kwargs):
-
-    qs = Share.objects.filter(id=share_id)
-    if not qs.exists():
-        return Response({}, status=404)
-    obj = qs.first()
-    serializer = ShareSerializer_GET(obj)
-    return Response(serializer.data, status=200)
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def shareactionview(request, *args, **kwargs):
-
-    serializer = ShareActionSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-
-        data = serializer.validated_data
-        Share_id = data.get('id')
-        action = data.get('action')
-        qs = Share.objects.filter(id=Share_id)
-
-        if not qs.exists():
-            return Response({}, status=404)
-
-        obj = qs.first()
-
-        if action == 'like':
-            obj.likes.add(request.user)
-            serializer = ShareSerializer_GET(obj)
-            return Response(serializer.data, status=200)
-
-        elif action == 'unlike':
-            obj.likes.remove(request.user)
-            serializer = ShareSerializer_GET(obj)
-            return Response(serializer.data, status=200)
-
-        elif action == 'recommit':
-            new_commit = Share.objects.create(
-                user=request.user, parent=obj, content=obj.content)
-            serializer = ShareSerializer_GET(new_commit)
-            return Response(serializer.data, status=201)
-
-    return Response({}, status=200)
-
-
-@api_view(['GET', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def commit_delete(request, pk, *args, **kwargs):
-    qs = Share.objects.filter(id=pk)
-    if not qs.exists():
-        return Response({}, status=404)
-    qs = qs.filter(user=request.user)
-    if not qs.exists():
-        return Response({'message': 'You do not have permission for delete this commit'}, status=401)
-    qs.delete()
-    return Response({'message': 'Commit removed'}, status=200)
+def spher_profile_view(request, username, *args, **kwargs):
+    return render(request, "components/profile.html", context={"profile_username": username})
 
 
 def shareView_Django_Form(request, *args, **kwargs):
@@ -140,5 +52,7 @@ def shareView_Django_Form(request, *args, **kwargs):
     if form.errors:
         if request.is_ajax():
             return JsonResponse(form.errors, status=400)
-
-    return render(request, "pages/form.html", {"form": shareForm(), "title": " Share"})
+    context = {"form": shareForm(),
+               "title": " Share",
+               'btn': 'commit'}
+    return render(request, "pages/form.html", context)

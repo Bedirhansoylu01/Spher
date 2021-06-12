@@ -11,7 +11,7 @@ export function ShareList(props) {
 
     useEffect(() => {
         const final = [...props.newShares].concat(sharesInit)
-        if (final.length !== shares.length) { // consistent loop  can`t sees likes
+        if (final.length !== shares.length) { 
             setShares(final)
         }
     }, [props.newShares, shares, sharesInit])

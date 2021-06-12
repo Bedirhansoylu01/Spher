@@ -23,7 +23,7 @@ export function ShareCreate(props) {
   
   
     return <div className={props.className}>
-        <form onSubmit={handleSubmit}>
+        <form className='form' onSubmit={handleSubmit}>
           <textarea ref={textAreaRef} required={true} className='form-control' name='share'>
           </textarea>
           <button type='submit' className='btn btn-primary my-3'>Share</button>

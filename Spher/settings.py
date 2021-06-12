@@ -21,7 +21,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 LOGIN_URL = "/login"
 SHARE_ACTIONS = ['like', 'unlike', 'recommit']
-# Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # internal
     'connect.apps.ConnectConfig',
+    'accounts.apps.AccountsConfig',
     # From external
     'rest_framework',
     'corsheaders'
@@ -140,9 +141,9 @@ if DEBUG:
         'rest_framework.renderers.BrowsableAPIRenderer'
     ]
 
-    DEFAULT_AUTHENTICATION_CLASSES += [
-        'Spher.rest_api.dev.DevAuthentication'
-    ]
+#   DEFAULT_AUTHENTICATION_CLASSES += [
+#       'Spher.rest_api.dev.DevAuthentication'
+#   ]
 
 
 REST_FRAMEWORK = {

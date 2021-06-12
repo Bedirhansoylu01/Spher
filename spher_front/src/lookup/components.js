@@ -21,7 +21,6 @@ export function backendLookup(method, endpoint, callback, data) {
   if (data) {
     jsonData = JSON.stringify(data)
   }
-
   const xhr = new XMLHttpRequest()
   const url = `http://127.0.0.1:8000/api${endpoint}` //share_ls
   const csrftoken = getCookie('csrftoken');
@@ -34,16 +33,19 @@ export function backendLookup(method, endpoint, callback, data) {
   xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
   xhr.setRequestHeader("X-CSRFToken", csrftoken)
   }
-  
 
-  xhr.onload = function () {
+
+  xhr.onload = function() {
+    if (xhr.status === 403) {
+      const detail = xhr.response.detail
+      if (detail === "Authentication credentials were not provided."){
+        window.location.href = "/login?showLoginRequired=true"
+      }
+    }
     callback(xhr.response, xhr.status)
-  };
-  xhr.onerror = function (ms) {
-    console.log(ms);
-    callback({ "message": "The request was an error" }, 400);
   }
-  xhr.send(jsonData);
+  xhr.onerror = function (ms) {
+    callback({"message": "The request was an error"}, 400)
+  }
+  xhr.send(jsonData)
 }
-
-

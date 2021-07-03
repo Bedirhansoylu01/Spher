@@ -30,10 +30,12 @@ class ConnectTestCase(TestCase):
         user = User.objects.get(username="beta")
         self.assertEqual(user.username, "beta")
 
+
     def test_Share_created(self):
         Share.objects.create(content="beta testing", user=self.user)
         qs = Share.objects.all()
         self.assertEqual(len(qs), 4)
+
 
     def test_list(self):
         client = APIClient()
@@ -41,6 +43,12 @@ class ConnectTestCase(TestCase):
         r_json = len(response.json())
         self.assertEqual(r_json, 3)
         self.assertEqual(response.status_code, 200)
+
+
+    def test_share_related_name(self):
+        user=self.user
+        self.assertEqual(user.shares.count(),2)
+
 
     def test_action_and_detail(self):
         client = self.apiclient()
@@ -51,14 +59,21 @@ class ConnectTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         like = response.json()['likes']
         self.assertEqual(like, 1)
+        user=self.user
+        my_like_instance=user.commit_like_set.count()
+        my_related_likes=user.commit_user.count()
+        self.assertEqual(my_like_instance,2)
+        self.assertEqual(my_like_instance,my_related_likes)
+
 
     def test_action_unlike(self):
         client = self.apiclient()
         response = client.post('/api/share/action',
                                {'id': "1", 'action': 'unlike'})
-        self.assertEqual(response.status_code, 200)
         like = response.json()['likes']
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(like, 0)
+
 
     def test_action_recommit(self):
         client = self.apiclient()
@@ -71,10 +86,10 @@ class ConnectTestCase(TestCase):
         response = client.post('/api/share/action',
                                {'id': "1", 'action': 'recommit'})
         self.assertEqual(response.status_code, 201)
-        client = self.apiclient()
         response = client.get('/api/share_ls')
         r_json = len(response.json())
         self.assertEqual(r_json, 7)
+
 
     def test_API_share(self):
         client = self.apiclient()
@@ -82,6 +97,7 @@ class ConnectTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json(), {'id': 4,
                                            'content': 'Gamma', 'likes': 0, 'user': 'beta', 'parent': None})
+
 
     def test_API_delete(self):
         client = self.apiclient()
@@ -92,3 +108,4 @@ class ConnectTestCase(TestCase):
         self.assertEqual(response.json()[
                          'message'], 'You do not have permission for delete this commit')
         self.assertEqual(response.status_code, 401)
+

@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # internal
     'connect.apps.ConnectConfig',
     'accounts.apps.AccountsConfig',
+    'profiles.apps.ProfilesConfig',
     # From external
     'rest_framework',
     'corsheaders'

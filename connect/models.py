@@ -6,13 +6,15 @@ User = settings.AUTH_USER_MODEL
 
 
 class Commit_Like(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     commit = models.ForeignKey('Share', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
 class Share(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="shares")
     parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
     content = models.TextField(blank=True, null=True)
     media_image = models.FileField(upload_to='media/', blank=True, null=True)
@@ -27,5 +29,4 @@ class Share(models.Model):
     def is_recommit(self):
         return self.parent != None
 
-    def __str__(self):
-        return self.content
+    

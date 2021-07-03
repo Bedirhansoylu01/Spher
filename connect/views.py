@@ -22,10 +22,6 @@ def spher_detail_view(request, share_id, *args, **kwargs):
     return render(request, "components/detail.html", context={'share_id': share_id})
 
 
-def spher_profile_view(request, username, *args, **kwargs):
-    return render(request, "components/profile.html", context={"profile_username": username})
-
-
 def shareView_Django_Form(request, *args, **kwargs):
     #________________Check in Authenticated User_______________________________________________#
     if not request.user.is_authenticated:

@@ -1,32 +1,52 @@
 from rest_framework.response import Response
 # from rest_framework.authentication import SessionAuthentication
-from rest_framework.decorators import api_view, permission_classes 
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 # internal fs
 from ..models import Share
-from ..serializers import ShareSerializer, ShareSerializer_GET, ShareActionSerializer
+from ..serializers import ShareSerializer, ShareSerializer_POST, ShareActionSerializer
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def shareView(request, *args, **kwargs):
     serializer = ShareSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serial = serializer.save(user=request.user)
-        serial = ShareSerializer_GET(serial)
+        serial = ShareSerializer_POST(serial)
         return Response(serial.data, status=201)
     return Response({}, status=400)
 
+# _________________________________________________________________________________________________
+
+
+def get_paginated_queryset_response(qs, request):
+
+    paginator = PageNumberPagination()
+    paginator.page_size = 20
+    paginated_qs = paginator.paginate_queryset(qs, request)
+    serializer = ShareSerializer(paginated_qs, many=True, context={"request":request})
+    return paginator.get_paginated_response(serializer.data)
+
 
 @api_view(['GET'])
-#@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
+def commit_feed(request, *args, **kwargs):
+    user = request.user
+    qs = Share.objects.feed(user)
+    return get_paginated_queryset_response(qs, request)
+
+# _______________________________________________________________________________________________
+
+
+@api_view(['GET'])
 def commit_list(request, *args, **kwargs):
     qs = Share.objects.all()
-    username = request.GET.get('username') #? url:/api/share_ls______?username=_variable_
+    username = request.GET.get('username')  # ?username=ades||telos
     if username != None:
-        qs= qs.filter(user__username__iexact=username)
-    serializer = ShareSerializer_GET(qs, many=True) # many=True for mutiple object
-    return Response(serializer.data, status=200)
+        qs = qs.by_username(username)
+    return get_paginated_queryset_response(qs, request)
 
 
 @api_view(['GET'])
@@ -36,7 +56,7 @@ def commit_detail(request, share_id, *args, **kwargs):
     if not qs.exists():
         return Response({}, status=404)
     obj = qs.first()
-    serializer = ShareSerializer_GET(obj)
+    serializer = ShareSerializer_POST(obj)
     return Response(serializer.data, status=200)
 
 
@@ -59,18 +79,18 @@ def shareactionview(request, *args, **kwargs):
 
         if action == 'like':
             obj.likes.add(request.user)
-            serializer = ShareSerializer_GET(obj)
+            serializer = ShareSerializer_POST(obj)
             return Response(serializer.data, status=200)
 
         elif action == 'unlike':
             obj.likes.remove(request.user)
-            serializer = ShareSerializer_GET(obj)
+            serializer = ShareSerializer_POST(obj)
             return Response(serializer.data, status=200)
 
         elif action == 'recommit':
             new_commit = Share.objects.create(
                 user=request.user, parent=obj, content=obj.content)
-            serializer = ShareSerializer_GET(new_commit)
+            serializer = ShareSerializer_POST(new_commit)
             return Response(serializer.data, status=201)
 
     return Response({}, status=200)

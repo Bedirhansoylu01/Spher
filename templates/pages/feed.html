@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+    <div id='spher-feed'></div>
+{% else %}
+    <div id='Home_Share'></div>
+{% endif %}
+
+{% endblock content %}

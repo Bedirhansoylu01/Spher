@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.conf import settings
 from .models import Share
+from profiles.serializers import PublicProfileSerializer
+
 
 SHARE_ACTIONS = settings.SHARE_ACTIONS
 
@@ -18,38 +20,40 @@ class ShareActionSerializer(serializers.Serializer):
         return value
 
 
-class ShareSerializer(serializers.ModelSerializer):
-    likes = serializers.SerializerMethodField(read_only=True)
-    user = serializers.SerializerMethodField(read_only=True)
 
+class ShareSerializer_POST(serializers.ModelSerializer):
+    user = PublicProfileSerializer(source='user.profile',read_only=True)
+    likes = serializers.SerializerMethodField(read_only=True)
+    
     class Meta:
         model = Share
-        fields = ["id", "content", "likes", "user", "parent"]
+        fields = ["user","id", "content",
+        "likes","timestamp"]
 
-    def get_user(self, obj):
-        return obj.user.username
 
     def get_likes(self, obj):
         return obj.likes.count()
-
-    def clean_content(self):
+    
+    def validate_content(self):
         content = self.cleaned_data.get("content")
         if len(content) > 250:
             raise serializers.ValidationError("This commit is too big")
         return content
 
 
-class ShareSerializer_GET(serializers.ModelSerializer):
+
+class ShareSerializer(serializers.ModelSerializer):
+    user = PublicProfileSerializer(source='user.profile',read_only=True)#serializers.SerializerMethodField(read_only=True)
     likes = serializers.SerializerMethodField(read_only=True)
-    user = serializers.SerializerMethodField(read_only=True)
-    parent = ShareSerializer(read_only=True)
+    parent = ShareSerializer_POST(read_only=True)
+
 
     class Meta:
         model = Share
-        fields = ["id", "content", "likes", "user", "parent"]
-
-    def get_user(self, obj):
-        return obj.user.username
+        fields = ["user","id", "content",
+        "likes","is_recommit","parent","timestamp"]
 
     def get_likes(self, obj):
         return obj.likes.count()
+
+

@@ -2,9 +2,29 @@ import React, { useEffect,useState } from 'react'
 import {apiShareDetail} from './lookup'
 import { Share } from './detail'
 import {ShareList} from './list'
+import { FeedList } from './feed'
 import {ShareCreate} from './create'
-import '../App.css';
+import '../index.css';
 
+
+
+export function FeedComponents(props) {
+
+
+  const [newShares, setNewShares] = useState([])
+  const validUser = props.validUser === 'true' ? true : false 
+  const handleNewShare = (newShare) => {
+    let tmpNewShares = [...newShares]
+    tmpNewShares.unshift(newShare)
+    setNewShares(tmpNewShares)
+  }
+
+
+  return <div className='row'>
+    {validUser === true && <ShareCreate didShare={handleNewShare} className='col-md-4 mx-auto col-10'/>} 
+    <FeedList {...props} newShares={newShares} />
+  </div>
+}
 
 
 export function ShareComponents(props) {
@@ -43,9 +63,7 @@ export function ShareDetailComponent(props){
   useEffect(()=>{
     if(didLookup===false){   
       apiShareDetail(shareId,handleBackendLookup)
-      setDidLookup(true)
-    
-    }
+      setDidLookup(true) }
   },[shareId,didLookup,setDidLookup])
 
 

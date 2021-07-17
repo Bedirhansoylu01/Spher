@@ -6,7 +6,8 @@ export function ShareList(props) {
 
     const [sharesInit, setSharesInit] = useState([])
     const [shares, setShares] = useState([])
-    const [shareDidSet, setShareDidSet] = useState(false)
+    const [nextUrl,setNextUrl] = useState(null)
+    const [sharesDidSet, setShareDidSet] = useState(false)
 
 
     useEffect(() => {
@@ -19,20 +20,20 @@ export function ShareList(props) {
 
 
     useEffect(() => {
-        if (shareDidSet === false) {
+        if (sharesDidSet === false){
             const handleShareListLookup = (response, status) => {
                 if (status === 200) {
-
-                    setSharesInit(response)
+                    setNextUrl(response.next)
+                    setSharesInit(response.results)
                     setShareDidSet(true)
-
+                    console.log(response)
                 } else {
                     alert('There was an error')
                 }
             }
             apiShareList(props.username, handleShareListLookup)
         }
-    }, [sharesInit, shareDidSet, setShareDidSet, props.username])//if second argument only is sharesInit consistent loop begin 
+    }, [sharesInit, sharesDidSet, setShareDidSet, props.username])//if second argument only is sharesInit consistent loop begin 
 
 
     const handleDidRecommit = (newShare) => {
@@ -42,16 +43,28 @@ export function ShareList(props) {
         const updateFinalShares = [...shares]
         updateFinalShares.unshift(shares)
         setShares(updateFinalShares)
-
-
+    }
+    const handleLoadNext=(event)=>{
+        event.preventDefault()
+        if (nextUrl !== null){
+            const handleLoadNextResponse=(response,status)=>{if (status === 200) {
+                setNextUrl(response.next)
+                const newShares=[...shares].concat(response.results)
+                setSharesInit(newShares)
+                setShares(newShares)
+            } else {
+                alert('There was an error')
+            }
+        }
+            apiShareList(props.username,handleLoadNextResponse,nextUrl)
+        }
     }
 
-    return shares.map((item, index) => {
+    return <React.Fragment>{shares.map((item, index) => {
         return <Share share={item}
             didRecommit={handleDidRecommit}
-            className='col-12 col-md-10 mx-auto border rounded py-3 mb-4'
-            key={`${index}`} />
-    }
-
-    )
-}
+            className='my-5 py-5 border bg-white text-dark'
+            key={`${index}-{item.id}`} />
+    })}
+    { nextUrl !== null && <button onClick={handleLoadNext} className='btn btn-outline-primary' >Load next</button>}
+    </React.Fragment> }

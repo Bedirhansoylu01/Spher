@@ -2,14 +2,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path,re_path
 from django.urls.conf import include
-from .views import (home, spher_list_view,
+from .views import (home_view,spher_list_view,
                     spher_detail_view)
 from accounts.views import (login_view,
                         register_view,
                         logout_view,)
 
 urlpatterns = [
-    path("", spher_list_view),
+    path("",home_view),
+    path("global/", spher_list_view),
     path("login/",login_view),
     path("logout/",logout_view),
     path("register/",register_view),

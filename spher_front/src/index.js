@@ -2,11 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import { ShareComponents,ShareDetailComponent } from './shares'
+import { FeedComponents,ShareComponents,ShareDetailComponent } from './shares'
 import reportWebVitals from './reportWebVitals';
 
 const appHome = document.getElementById('root')
-const Sharels = document.getElementById("Home_Share")
 
 if (appHome) {
   ReactDOM.render(
@@ -16,13 +15,22 @@ if (appHome) {
   );
 }
 
-
+const Sharels = document.getElementById("Home_Share")
 if (Sharels) {
-
   ReactDOM.render(
     React.createElement(ShareComponents, Sharels.dataset),
     Sharels)
 }
+
+
+const spherFeedEl = document.getElementById("spher-feed")
+if (spherFeedEl) {
+  ReactDOM.render(
+    React.createElement(FeedComponents, spherFeedEl.dataset),spherFeedEl)
+}
+
+
+
 
 
 const shareDetailElements= document.querySelectorAll(".spher-detail")

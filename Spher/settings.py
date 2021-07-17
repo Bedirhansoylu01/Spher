@@ -129,26 +129,23 @@ CORS_ALLOW_ALL_ORIGINS = True  # any website has access to my API
 CORS_URLS_REGEX = r'^/api/.*$'
 
 
-DEFAULT_RENDERER_CLASSES = [ 
-        'rest_framework.renderers.JSONRenderer'
+DEFAULT_RENDERER_CLASSES = [
+        'rest_framework.renderers.JSONRenderer',
     ]
 
 DEFAULT_AUTHENTICATION_CLASSES = [
-        'rest_framework.authentication.SessionAuthentication'
-    ]
-
+    'rest_framework.authentication.SessionAuthentication'
+]
 if DEBUG:
     DEFAULT_RENDERER_CLASSES += [
-        'rest_framework.renderers.BrowsableAPIRenderer'
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ]
-
-#   DEFAULT_AUTHENTICATION_CLASSES += [
-#       'Spher.rest_api.dev.DevAuthentication'
-#   ]
-
-
+#    DEFAULT_AUTHENTICATION_CLASSES += [
+#        'Spher.rest_api.dev.DevAuthentication'
+#    ]
 REST_FRAMEWORK = {
+    
     'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,
-
     'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
 }
+

@@ -12,7 +12,7 @@ export function FeedComponents(props) {
 
 
   const [newShares, setNewShares] = useState([])
-  const validUser = props.validUser === 'true' ? true : false 
+  const validUser = props.validUser === 'false' ? false : true 
   const handleNewShare = (newShare) => {
     let tmpNewShares = [...newShares]
     tmpNewShares.unshift(newShare)
@@ -22,7 +22,7 @@ export function FeedComponents(props) {
 
   return <div className='row'>
     {validUser === true && <ShareCreate didShare={handleNewShare} className='col-md-4 mx-auto col-10'/>} 
-    <FeedList {...props} newShares={newShares} />
+    <FeedList newShares={newShares} {...props}/>
   </div>
 }
 

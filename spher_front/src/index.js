@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import { FeedComponents,ShareComponents,ShareDetailComponent } from './shares'
+import { ProfileBadgeComponent } from './profiles';
 import reportWebVitals from './reportWebVitals';
 
 const appHome = document.getElementById('root')
@@ -31,13 +32,21 @@ if (spherFeedEl) {
 
 
 
-
-
 const shareDetailElements= document.querySelectorAll(".spher-detail")
 
 shareDetailElements.forEach(container=>{
   ReactDOM.render(
     React.createElement(ShareDetailComponent, container.dataset),
+    container);
+})
+
+
+
+const userProfileBadgeElements= document.querySelectorAll(".spher-profile-badge")
+
+userProfileBadgeElements.forEach(container=>{
+  ReactDOM.render(
+    React.createElement(ProfileBadgeComponent, container.dataset),
     container);
 })
 

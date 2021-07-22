@@ -3,7 +3,7 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
-    <div id='spher-feed'></div>
+    <div id='spher-feed' data-valid-User="true"></div>
 {% else %}
     <div id='Home_Share'></div>
 {% endif %}
